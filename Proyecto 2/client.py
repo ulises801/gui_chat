@@ -7,8 +7,28 @@ def receive():
     while True:
         try:
             msg = client_socket.recv(BUFSIZ).decode("utf8")
-            #Inserta el mensaje en la interfaz
-            msg_list.insert(tkinter.END, msg)
+            
+            if "Archivo enviado" in msg: #Lalo: Archivo enviado
+                
+                link = tkinter.Label(messages_frame,text="Descargar", fg="blue", cursor="hand2")
+                link.pack()
+                link.bind("<Button-1>", download)
+
+                msg_list.insert(tkinter.END, msg)
+
+            elif msg == "Enviando":
+                #Inserta el mensaje en la interfaz
+                file = open('Client files/client_file.png', "wb")
+
+                image_chunk = client_socket.recv(BUFSIZ) 
+            
+                file.write(image_chunk)
+                
+                file.close()
+                msg_list.insert(tkinter.END, "Descarga completada")
+            else:
+                #Inserta el mensaje en la interfaz
+                msg_list.insert(tkinter.END, msg)
         except OSError:  
             break
 
@@ -23,6 +43,7 @@ def send(event=None):#Funcion ligada a un boton
 def send_file(event=None):
     path = my_file.get()#Obtenemos el path desde la interfaz
     my_file.set("")
+    #root, extension =os.path.splitext(path_Inicio)
     client_socket.send(bytes(path, "utf8"))#C:/Users/eduar/Downloads/Rinnegan_de_Sasuke.png
 
     #Enviar el archivo
@@ -35,6 +56,12 @@ def send_file(event=None):
     
     
     file.close()
+
+def download(event=None):
+    path = "download"
+    client_socket.send(bytes(path, "utf8"))
+
+    
 
 def on_closing(event=None):
     my_msg.set("{quit}")

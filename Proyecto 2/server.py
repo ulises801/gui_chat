@@ -39,6 +39,18 @@ def handle_client(client): # Toma el socket del cliente como argumento.
              file.close()
              broadcast(bytes("%s: Archivo enviado" %name, "utf8"))
 
+        elif msg == bytes("download", "utf8"):#Envia archivo
+             
+             client.send(bytes("Enviando", "utf8"))
+
+             file = open('Server files/server_file.png', "rb")
+
+             file_data  = file.read(BUFSIZ)
+
+             client.send(bytes(file_data))
+    
+             file.close()
+
 
         elif msg != bytes("{quit}", "utf8"):
             broadcast(msg, name+": ")
@@ -47,7 +59,7 @@ def handle_client(client): # Toma el socket del cliente como argumento.
             client.send(bytes("{quit}", "utf8"))
             client.close()
             del clients[client]#
-            break
+            
 
 def broadcast(msg, prefix=""):
     for sock in clients:#Envia a cada cliente
