@@ -1,7 +1,9 @@
 
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
+from tkinter.filedialog import askopenfilename
 import tkinter
+
 
 def receive():
     while True:
@@ -30,20 +32,29 @@ def receive():
                 #Inserta el mensaje en la interfaz
                 msg_list.insert(tkinter.END, msg)
         except OSError:  
+            print(OSError)
             break
 
 def send(event=None):#Funcion ligada a un boton
+
     msg = my_msg.get()#Obtenemos el mensaje desde la interfaz
     my_msg.set("")#Deja en blanco el cuadro de texto
     client_socket.send(bytes(msg, "utf8"))
+
     if msg == "{quit}":
+
         client_socket.close()#Cerrar conexion
         top.quit()#Cerrar aplicacion
 
 def send_file(event=None):
+
     path = my_file.get()#Obtenemos el path desde la interfaz
     my_file.set("")
+
     #root, extension =os.path.splitext(path_Inicio)
+    # path = askopenfilename()
+    # path.replace("\\","/")
+    # print (path)
     client_socket.send(bytes(path, "utf8"))#C:/Users/eduar/Downloads/Rinnegan_de_Sasuke.png
 
     #Enviar el archivo
@@ -56,14 +67,18 @@ def send_file(event=None):
     
     
     file.close()
+    print("-----------------------------------")
+
 
 def download(event=None):
+
     path = "download"
     client_socket.send(bytes(path, "utf8"))
 
     
 
 def on_closing(event=None):
+
     my_msg.set("{quit}")
     send()
 
@@ -115,3 +130,7 @@ client_socket.connect(ADDR)#
 receive_thread = Thread(target=receive)
 receive_thread.start()
 tkinter.mainloop()
+
+
+
+#C:/Users/vgonz/OneDrive/Imágenes/david 4.png
